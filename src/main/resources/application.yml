@@ -1,1 +1,26 @@
-spring.application.name=simplified-finance-api
+spring:
+  application:
+    name: simplified-finance-api
+  jpa:
+    show_sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3301}/simplified-finance-db
+    username: ${DATABASE_USER:simplified_finance_user}
+    password: ${DATABASE_PASSWORD:password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  docker:
+    compose:
+      enabled: ${ENABLE_DOCKER_COMPOSE:true}
+      lifecycle-management: start_only
+      file: compose.yaml
+  flyway:
+    enabled: true
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3301}/simplified-finance-db
+    user: ${DATABASE_USER:simplified_finance_user}
+    password: ${DATABASE_PASSWORD:password}
+server:
+  address: 0.0.0.0
+  port: ${PORT:8080}

@@ -17,7 +17,7 @@ public class TestSimplifiedFinanceApiApplication {
   }
 
   public static void main(String[] args) {
-    SpringApplication.from(SimplifiedFinanceApiApplication::main).with(TestSimplifiedFinanceApiApplication.class).run(args);
+    SpringApplication.from(Application::main).with(TestSimplifiedFinanceApiApplication.class).run(args);
   }
 
 }
