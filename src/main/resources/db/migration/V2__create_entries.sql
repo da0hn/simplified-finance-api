@@ -1,6 +1,6 @@
 CREATE TABLE `simplified-finance-db`.entries
 (
-    id BIGINT AUTO_INCREMENT NOT NULL,
+    id VARCHAR(36) NOT NULL DEFAULT (UUID()),
     title VARCHAR(255) NOT NULL,
     `description` VARCHAR(255) NULL,
     type VARCHAR(255) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE `simplified-finance-db`.entries
     status VARCHAR(255) NOT NULL,
     issued_at datetime NOT NULL,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    parent_entry_id BIGINT NULL,
+    parent_entry_id VARCHAR(36) NULL,
     installments BIGINT NULL,
     installment_amount DECIMAL NULL,
     installment_date date NULL,

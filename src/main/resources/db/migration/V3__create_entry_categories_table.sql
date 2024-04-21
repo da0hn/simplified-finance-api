@@ -1,7 +1,7 @@
 CREATE TABLE  `simplified-finance-db`.entry_categories
 (
-    category_id BIGINT NOT NULL,
-    entry_id BIGINT NOT NULL,
+    category_id VARCHAR(36) NOT NULL,
+    entry_id VARCHAR(36) NOT NULL,
     CONSTRAINT pk_entry_category PRIMARY KEY (category_id, entry_id)
 );
 
