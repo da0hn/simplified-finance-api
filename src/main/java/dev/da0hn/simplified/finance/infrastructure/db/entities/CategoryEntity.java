@@ -30,9 +30,8 @@ public class CategoryEntity implements Serializable {
   private static final long serialVersionUID = -4405829484923436237L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", nullable = false)
-  private Long id;
+  @Column(name = "id", nullable = false, length = 36)
+  private String id;
 
   @Column(name = "name", nullable = false, unique = true)
   private String name;

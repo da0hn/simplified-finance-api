@@ -26,13 +26,13 @@ public class InstallmentDetailEntity implements Serializable {
   @Serial
   private static final long serialVersionUID = 1250185594115222821L;
 
-  @Column(name = "installments", nullable = false, updatable = false)
+  @Column(name = "installments", updatable = false)
   private Long installments;
 
-  @Column(name = "installment_amount", nullable = false, updatable = false)
+  @Column(name = "installment_amount", updatable = false)
   private BigDecimal installmentAmount;
 
-  @Column(name = "installment_date", nullable = false, updatable = false)
+  @Column(name = "installment_date", updatable = false)
   private YearMonth installmentDate;
 
   @Override

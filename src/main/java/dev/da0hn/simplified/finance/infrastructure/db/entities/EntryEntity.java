@@ -45,9 +45,8 @@ public class EntryEntity implements Serializable {
   private static final long serialVersionUID = -425032786865013388L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", nullable = false)
-  private Long id;
+  @Column(name = "id", nullable = false, length = 36)
+  private String id;
 
   @Column(name = "title", nullable = false)
   private String title;
