@@ -1,7 +1,14 @@
 package dev.da0hn.simplified.finance.core.domain;
 
 import dev.da0hn.simplified.finance.core.domain.commands.NewDebitEntryCommand;
+import dev.da0hn.simplified.finance.core.domain.enums.EntryStatus;
+import dev.da0hn.simplified.finance.core.domain.enums.EntryType;
+import dev.da0hn.simplified.finance.core.domain.enums.PaymentMethod;
+import dev.da0hn.simplified.finance.core.domain.validation.SelfValidating;
 import dev.da0hn.simplified.finance.core.domain.validation.Validations;
+import dev.da0hn.simplified.finance.core.domain.valueobjects.Amount;
+import dev.da0hn.simplified.finance.core.domain.valueobjects.EntryId;
+import dev.da0hn.simplified.finance.core.domain.valueobjects.InstallmentDetails;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -27,7 +34,7 @@ import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidati
 
 public class Entry extends SelfValidating<Entry> {
 
-  private final Long id;
+  private final EntryId entryId;
 
   @NotBlank(message = ENTRY_TITLE_NOT_BLANK)
   private final String title;
@@ -61,7 +68,7 @@ public class Entry extends SelfValidating<Entry> {
   private final Set<@Valid Category> categories;
 
   private Entry(
-    final Long id,
+    final EntryId entryId,
     final String title,
     final String description,
     final EntryType type,
@@ -73,7 +80,7 @@ public class Entry extends SelfValidating<Entry> {
     final Optional<InstallmentDetails> installmentDetails,
     final Set<Category> categories
   ) {
-    this.id = id;
+    this.entryId = entryId;
     this.title = title;
     this.description = description;
     this.type = type;
@@ -90,7 +97,7 @@ public class Entry extends SelfValidating<Entry> {
   public static Entry debitEntry(final NewDebitEntryCommand command) {
     Validations.requireNonNull(command, "NewDebitEntryCommand");
     return new Entry(
-      null,
+      EntryId.newInstance(),
       command.title(),
       command.description(),
       command.type(),
@@ -104,8 +111,8 @@ public class Entry extends SelfValidating<Entry> {
     );
   }
 
-  public Optional<Long> maybeId() {
-    return Optional.ofNullable(this.id);
+  public EntryId entryId() {
+    return this.entryId;
   }
 
   public String title() {

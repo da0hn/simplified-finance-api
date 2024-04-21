@@ -1,5 +1,6 @@
-package dev.da0hn.simplified.finance.core.domain;
+package dev.da0hn.simplified.finance.core.domain.valueobjects;
 
+import dev.da0hn.simplified.finance.core.domain.validation.SelfValidating;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 

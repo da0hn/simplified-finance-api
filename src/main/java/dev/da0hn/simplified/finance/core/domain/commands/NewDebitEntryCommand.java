@@ -1,9 +1,9 @@
 package dev.da0hn.simplified.finance.core.domain.commands;
 
-import dev.da0hn.simplified.finance.core.domain.Amount;
+import dev.da0hn.simplified.finance.core.domain.valueobjects.Amount;
 import dev.da0hn.simplified.finance.core.domain.Category;
-import dev.da0hn.simplified.finance.core.domain.EntryStatus;
-import dev.da0hn.simplified.finance.core.domain.EntryType;
+import dev.da0hn.simplified.finance.core.domain.enums.EntryStatus;
+import dev.da0hn.simplified.finance.core.domain.enums.EntryType;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

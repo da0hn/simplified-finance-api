@@ -1,4 +1,4 @@
-package dev.da0hn.simplified.finance.core.domain;
+package dev.da0hn.simplified.finance.core.domain.validation;
 
 import dev.da0hn.simplified.finance.core.domain.exceptions.DomainConstraintViolationException;
 import jakarta.validation.Validation;

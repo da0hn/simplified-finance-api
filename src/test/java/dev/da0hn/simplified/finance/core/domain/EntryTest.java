@@ -1,8 +1,12 @@
 package dev.da0hn.simplified.finance.core.domain;
 
 import dev.da0hn.simplified.finance.core.domain.commands.NewDebitEntryCommand;
+import dev.da0hn.simplified.finance.core.domain.enums.EntryStatus;
+import dev.da0hn.simplified.finance.core.domain.enums.EntryType;
+import dev.da0hn.simplified.finance.core.domain.enums.PaymentMethod;
 import dev.da0hn.simplified.finance.core.domain.exceptions.DomainConstraintViolationException;
 import dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages;
+import dev.da0hn.simplified.finance.core.domain.valueobjects.Amount;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,13 +39,13 @@ class EntryTest {
         expectedType,
         expectedStatus,
         expectedIssuedAt,
-        Set.of(new Category(1L, "category", "category description"))
+        Set.of(Category.newCategory("category", "category description"))
       );
 
       final var debitEntry = Entry.debitEntry(command);
 
       Assertions.assertThat(debitEntry).isNotNull();
-      Assertions.assertThat(debitEntry.maybeId()).isEmpty();
+      Assertions.assertThat(debitEntry.entryId()).isNotNull();
       Assertions.assertThat(debitEntry.title()).isEqualTo(expectedTitle);
       Assertions.assertThat(debitEntry.description()).isEqualTo(expectedDescription);
       Assertions.assertThat(debitEntry.type()).isEqualTo(expectedType);
@@ -70,7 +74,7 @@ class EntryTest {
         expectedType,
         expectedStatus,
         expectedIssuedAt,
-        Set.of(new Category(1L, "category", "category description"))
+        Set.of(Category.newCategory("category", "category description"))
       );
 
       Assertions.assertThatThrownBy(() -> Entry.debitEntry(command))
@@ -94,7 +98,7 @@ class EntryTest {
         expectedType,
         expectedStatus,
         expectedIssuedAt,
-        Set.of(new Category(1L, "category", "category description"))
+        Set.of(Category.newCategory("category", "category description"))
       );
 
       Assertions.assertThatThrownBy(() -> Entry.debitEntry(command))
@@ -118,7 +122,7 @@ class EntryTest {
         expectedType,
         expectedStatus,
         expectedIssuedAt,
-        Set.of(new Category(1L, "category", "category description"))
+        Set.of(Category.newCategory("category", "category description"))
       );
 
       Assertions.assertThatThrownBy(() -> Entry.debitEntry(command))
@@ -142,7 +146,7 @@ class EntryTest {
         null,
         expectedStatus,
         expectedIssuedAt,
-        Set.of(new Category(1L, "category", "category description"))
+        Set.of(Category.newCategory("category", "category description"))
       );
 
       Assertions.assertThatThrownBy(() -> Entry.debitEntry(command))
@@ -166,7 +170,7 @@ class EntryTest {
         expectedType,
         null,
         expectedIssuedAt,
-        Set.of(new Category(1L, "category", "category description"))
+        Set.of(Category.newCategory("category", "category description"))
       );
 
       Assertions.assertThatThrownBy(() -> Entry.debitEntry(command))
@@ -190,7 +194,7 @@ class EntryTest {
         expectedType,
         expectedStatus,
         null,
-        Set.of(new Category(1L, "category", "category description"))
+        Set.of(Category.newCategory("category", "category description"))
       );
 
       Assertions.assertThatThrownBy(() -> Entry.debitEntry(command))
