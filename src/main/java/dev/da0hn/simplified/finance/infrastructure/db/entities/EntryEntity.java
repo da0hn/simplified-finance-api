@@ -1,21 +1,16 @@
 package dev.da0hn.simplified.finance.infrastructure.db.entities;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +23,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -72,18 +68,18 @@ public class EntryEntity implements Serializable {
   @Column(name = "issued_at", nullable = false, updatable = false)
   private LocalDateTime issuedAt;
 
+  @Column(name = "reference_month", nullable = false, updatable = false)
+  private YearMonth referenceMonth;
+
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
-  @Embedded
-  private InstallmentDetailEntity installmentDetail;
+  @ManyToOne
+  @JoinColumn(name = "future_expense_entry_id", foreignKey = @ForeignKey(name = "fk_entries_on_future_expense_entries"))
+  private FutureExpenseEntryEntity futureExpenseEntry;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "parent_entry_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_entries_on_parent_entry"))
-  private EntryEntity parent;
-
-  @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-  private Set<EntryEntity> children = new HashSet<>();
+  @Column(name = "installment_number")
+  private Long installmentNumber;
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
@@ -114,18 +110,20 @@ public class EntryEntity implements Serializable {
 
   @Override
   public String toString() {
-    return this.getClass().getSimpleName() + "(" +
-           "id = " + this.id + ", " +
-           "title = " + this.title + ", " +
-           "description = " + this.description + ", " +
-           "type = " + this.type + ", " +
-           "amount = " + this.amount + ", " +
-           "paymentMethod = " + this.paymentMethod + ", " +
-           "status = " + this.status + ", " +
-           "issuedAt = " + this.issuedAt + ", " +
-           "createdAt = " + this.createdAt + ", " +
-           "installmentDetail = " + this.installmentDetail + ", " +
-           "parent = " + this.parent + ")";
+    return "EntryEntity{" +
+           "id='" + this.id + '\'' +
+           ", title='" + this.title + '\'' +
+           ", description='" + this.description + '\'' +
+           ", type=" + this.type +
+           ", amount=" + this.amount +
+           ", paymentMethod=" + this.paymentMethod +
+           ", status=" + this.status +
+           ", issuedAt=" + this.issuedAt +
+           ", referenceMonth=" + this.referenceMonth +
+           ", createdAt=" + this.createdAt +
+           ", futureExpenseEntry=" + this.futureExpenseEntry +
+           ", categories=" + this.categories +
+           '}';
   }
 
 }

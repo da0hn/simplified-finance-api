@@ -1,6 +1,7 @@
 package dev.da0hn.simplified.finance.core.domain.valueobjects;
 
 import dev.da0hn.simplified.finance.core.domain.exceptions.DomainValidationException;
+import dev.da0hn.simplified.finance.core.domain.validation.Validations;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -45,6 +46,13 @@ public final class Amount {
     if (!(o instanceof final Amount amount)) return false;
 
     return Objects.equals(this.value, amount.value);
+  }
+
+  public Amount divideBy(final Number value) {
+    Validations.requireNonNull(value, "value is required");
+    return new Amount(
+      this.value.divide(new BigDecimal(value.toString()), RoundingMode.HALF_EVEN)
+    );
   }
 
 }

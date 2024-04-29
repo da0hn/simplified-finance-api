@@ -1,6 +1,7 @@
 package dev.da0hn.simplified.finance.core.domain;
 
-import dev.da0hn.simplified.finance.core.domain.commands.NewDebitEntryCommand;
+import dev.da0hn.simplified.finance.core.domain.commands.NewCreditExpenseEntryCommand;
+import dev.da0hn.simplified.finance.core.domain.commands.NewDebitExpenseEntryCommand;
 import dev.da0hn.simplified.finance.core.domain.enums.EntryStatus;
 import dev.da0hn.simplified.finance.core.domain.enums.EntryType;
 import dev.da0hn.simplified.finance.core.domain.enums.PaymentMethod;
@@ -8,13 +9,13 @@ import dev.da0hn.simplified.finance.core.domain.validation.SelfValidating;
 import dev.da0hn.simplified.finance.core.domain.validation.Validations;
 import dev.da0hn.simplified.finance.core.domain.valueobjects.Amount;
 import dev.da0hn.simplified.finance.core.domain.valueobjects.EntryId;
-import dev.da0hn.simplified.finance.core.domain.valueobjects.InstallmentDetails;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -25,15 +26,17 @@ import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidati
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_CATEGORIES_NOT_NULL;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_CREATED_AT_NOT_NULL;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_DESCRIPTION_NOT_BLANK;
-import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_INSTALLMENT_DETAILS_NOT_NULL;
+import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_ID_NOT_NULL;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_ISSUED_AT_NOT_NULL;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_PAYMENT_METHOD_NOT_NULL;
+import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_REFERENCE_MONTH_NOT_NULL;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_STATUS_NOT_NULL;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_TITLE_NOT_BLANK;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_TYPE_NOT_NULL;
 
 public class Entry extends SelfValidating<Entry> {
 
+  @NotNull(message = ENTRY_ID_NOT_NULL)
   private final EntryId entryId;
 
   @NotBlank(message = ENTRY_TITLE_NOT_BLANK)
@@ -60,8 +63,10 @@ public class Entry extends SelfValidating<Entry> {
   @NotNull(message = ENTRY_ISSUED_AT_NOT_NULL)
   private final LocalDateTime issuedAt;
 
-  @NotNull(message = ENTRY_INSTALLMENT_DETAILS_NOT_NULL)
-  private final Optional<InstallmentDetails> installmentDetails;
+  @NotNull(message = ENTRY_REFERENCE_MONTH_NOT_NULL)
+  private final YearMonth referenceMonth;
+
+  private final Optional<@Valid InstallmentDetail> installmentDetail;
 
   @NotNull(message = ENTRY_CATEGORIES_NOT_NULL)
   @NotEmpty(message = ENTRY_CATEGORIES_NOT_EMPTY)
@@ -77,7 +82,8 @@ public class Entry extends SelfValidating<Entry> {
     final PaymentMethod paymentMethod,
     final LocalDateTime createdAt,
     final LocalDateTime issuedAt,
-    final Optional<InstallmentDetails> installmentDetails,
+    final YearMonth referenceMonth,
+    final Optional<@Valid InstallmentDetail> installmentDetail,
     final Set<Category> categories
   ) {
     this.entryId = entryId;
@@ -89,24 +95,45 @@ public class Entry extends SelfValidating<Entry> {
     this.paymentMethod = paymentMethod;
     this.createdAt = createdAt;
     this.issuedAt = issuedAt;
-    this.installmentDetails = installmentDetails;
+    this.referenceMonth = referenceMonth;
+    this.installmentDetail = installmentDetail;
     this.categories = categories != null ? new HashSet<>(categories) : new HashSet<>();
     this.validateSelf();
   }
 
-  public static Entry debitEntry(final NewDebitEntryCommand command) {
+  public static Entry debitExpenseEntry(final NewDebitExpenseEntryCommand command) {
     Validations.requireNonNull(command, "NewDebitEntryCommand");
     return new Entry(
       EntryId.newInstance(),
       command.title(),
       command.description(),
-      command.type(),
+      EntryType.EXPENSE,
       command.status(),
       command.amount(),
       PaymentMethod.DEBIT,
       LocalDateTime.now(),
       command.issuedAt(),
+      Optional.ofNullable(command.issuedAt()).map(YearMonth::from).orElse(null),
       Optional.empty(),
+      command.categories()
+    );
+  }
+
+  public static Entry creditExpenseEntry(final NewCreditExpenseEntryCommand command) {
+    Validations.requireNonNull(command, "NewCreditExpenseEntryCommand");
+    final var entryId = EntryId.newInstance();
+    return new Entry(
+      entryId,
+      command.title(),
+      command.description(),
+      EntryType.EXPENSE,
+      command.status(),
+      command.amount(),
+      PaymentMethod.CREDIT,
+      LocalDateTime.now(),
+      command.issuedAt(),
+      Optional.ofNullable(command.issuedAt()).map(YearMonth::from).orElse(null),
+      Optional.of(InstallmentDetail.newInstallmentDetail(entryId, command.installmentNumber(), command.futureExpenseEntry())),
       command.categories()
     );
   }
@@ -147,8 +174,12 @@ public class Entry extends SelfValidating<Entry> {
     return this.issuedAt;
   }
 
-  public Optional<InstallmentDetails> installmentDetails() {
-    return this.installmentDetails;
+  public YearMonth referenceMonth() {
+    return this.referenceMonth;
+  }
+
+  public Optional<InstallmentDetail> installmentDetail() {
+    return this.installmentDetail;
   }
 
   public Set<Category> categories() {
