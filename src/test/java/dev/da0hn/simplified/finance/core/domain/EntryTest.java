@@ -11,6 +11,7 @@ import dev.da0hn.simplified.finance.core.domain.exceptions.DomainValidationExcep
 import dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages;
 import dev.da0hn.simplified.finance.core.domain.valueobjects.Amount;
 import dev.da0hn.simplified.finance.core.domain.valueobjects.InstallmentQuantity;
+import dev.da0hn.simplified.finance.core.domain.valueobjects.IssuedAt;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,7 +30,7 @@ class EntryTest {
     @Test
     @DisplayName("Should create a new Debit entry")
     void test1() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedAmount = Amount.of(10.0);
       final var expectedStatus = EntryStatus.PENDING;
       final var expectedTitle = "title";
@@ -63,7 +64,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Debit Entry without title")
     void test2() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedAmount = Amount.of(10.0);
       final var expectedStatus = EntryStatus.PENDING;
       final var expectedDescription = "description";
@@ -85,7 +86,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Debit Entry without description")
     void test3() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedAmount = Amount.of(10.0);
       final var expectedStatus = EntryStatus.PENDING;
       final var expectedTitle = "title";
@@ -107,7 +108,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Debit Entry without amount")
     void test4() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedStatus = EntryStatus.PENDING;
       final var expectedTitle = "title";
       final var expectedDescription = "description";
@@ -129,7 +130,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Debit Entry without status")
     void test5() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedAmount = Amount.of(10.0);
       final var expectedTitle = "title";
       final var expectedDescription = "description";
@@ -173,7 +174,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Debit Entry with categories null")
     void test7() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedAmount = Amount.of(10.0);
       final var expectedStatus = EntryStatus.PENDING;
       final var expectedTitle = "title";
@@ -196,7 +197,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Debit Entry with categories empty")
     void test8() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedAmount = Amount.of(10.0);
       final var expectedStatus = EntryStatus.PENDING;
       final var expectedTitle = "title";
@@ -233,7 +234,7 @@ class EntryTest {
     @Test
     @DisplayName("Should create a new Credit entry with Installments")
     void test1() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedInstallmentQuantity = InstallmentQuantity.of(5L);
       final var expectedTotalAmount = Amount.of(100);
       final var expectedPartialAmount = Amount.of(20);
@@ -280,7 +281,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Credit Entry with title null")
     void test2() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var command = new NewFutureExpenseCommand(
         null,
         "description",
@@ -297,7 +298,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Credit Entry with description null")
     void test3() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var command = new NewFutureExpenseCommand(
         "title",
         null,
@@ -314,7 +315,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Credit Entry with installmentQuantity null")
     void test4() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var command = new NewFutureExpenseCommand(
         "title",
         "description",
@@ -331,7 +332,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Credit Entry with totalAmount null")
     void test7() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var command = new NewFutureExpenseCommand(
         "title",
         "description",
@@ -364,7 +365,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Credit Entry with categories null")
     void test9() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var command = new NewFutureExpenseCommand(
         "title",
         "description",
@@ -381,7 +382,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an Credit Entry with categories empty")
     void test10() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var command = new NewFutureExpenseCommand(
         "title",
         "description",
@@ -404,7 +405,7 @@ class EntryTest {
     @Test
     @DisplayName("Should create a new One Time Payment Credit entry")
     void test1() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedAmount = Amount.of(100);
       final var expectedStatus = EntryStatus.PAID;
       final var expectedTitle = "title";
@@ -437,7 +438,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an One Time Payment Credit Entry without title")
     void test2() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedAmount = Amount.of(100);
       final var expectedDescription = "description";
 
@@ -457,7 +458,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an One Time Payment Credit Entry without description")
     void test3() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedAmount = Amount.of(100);
       final var expectedStatus = EntryStatus.PENDING;
       final var expectedTitle = "title";
@@ -478,7 +479,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an One Time Payment Credit Entry without amount")
     void test4() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedTitle = "title";
       final var expectedDescription = "description";
 
@@ -518,7 +519,7 @@ class EntryTest {
     @Test
     @DisplayName("Should not create an One Time Payment Credit Entry with categories null")
     void test6() {
-      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedIssuedAt = IssuedAt.of(LocalDateTime.now().minusDays(10));
       final var expectedAmount = Amount.of(100);
       final var expectedTitle = "title";
       final var expectedDescription = "description";

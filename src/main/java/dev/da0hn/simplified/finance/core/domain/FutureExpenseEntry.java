@@ -10,6 +10,7 @@ import dev.da0hn.simplified.finance.core.domain.validation.Validations;
 import dev.da0hn.simplified.finance.core.domain.valueobjects.Amount;
 import dev.da0hn.simplified.finance.core.domain.valueobjects.FutureExpenseEntryId;
 import dev.da0hn.simplified.finance.core.domain.valueobjects.InstallmentQuantity;
+import dev.da0hn.simplified.finance.core.domain.valueobjects.IssuedAt;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -44,7 +45,7 @@ public class FutureExpenseEntry extends SelfValidating<FutureExpenseEntry> {
   private final Amount partialAmount;
 
   @NotNull(message = DomainValidationMessages.FUTURE_EXPENSE_ENTRY_ISSUED_AT_NOT_NULL)
-  private final LocalDateTime issuedAt;
+  private final IssuedAt issuedAt;
 
   @NotNull(message = DomainValidationMessages.FUTURE_EXPENSE_ENTRY_CREATED_AT_NOT_NULL)
   private final LocalDateTime createdAt;
@@ -59,7 +60,7 @@ public class FutureExpenseEntry extends SelfValidating<FutureExpenseEntry> {
     final InstallmentQuantity installmentQuantity,
     final Amount totalAmount,
     final Amount partialAmount,
-    final LocalDateTime issuedAt,
+    final IssuedAt issuedAt,
     final LocalDateTime createdAt,
     final Set<Entry> entries
   ) {
@@ -129,7 +130,7 @@ public class FutureExpenseEntry extends SelfValidating<FutureExpenseEntry> {
     return this.partialAmount;
   }
 
-  public LocalDateTime issuedAt() {
+  public IssuedAt issuedAt() {
     return this.issuedAt;
   }
 

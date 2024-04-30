@@ -10,13 +10,13 @@ import dev.da0hn.simplified.finance.core.domain.validation.SelfValidating;
 import dev.da0hn.simplified.finance.core.domain.validation.Validations;
 import dev.da0hn.simplified.finance.core.domain.valueobjects.Amount;
 import dev.da0hn.simplified.finance.core.domain.valueobjects.EntryId;
+import dev.da0hn.simplified.finance.core.domain.valueobjects.IssuedAt;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -30,7 +30,6 @@ import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidati
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_ID_NOT_NULL;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_ISSUED_AT_NOT_NULL;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_PAYMENT_METHOD_NOT_NULL;
-import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_REFERENCE_MONTH_NOT_NULL;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_STATUS_NOT_NULL;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_TITLE_NOT_BLANK;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_TYPE_NOT_NULL;
@@ -62,10 +61,7 @@ public class Entry extends SelfValidating<Entry> {
   private final LocalDateTime createdAt;
 
   @NotNull(message = ENTRY_ISSUED_AT_NOT_NULL)
-  private final LocalDateTime issuedAt;
-
-  @NotNull(message = ENTRY_REFERENCE_MONTH_NOT_NULL)
-  private final YearMonth referenceMonth;
+  private final IssuedAt issuedAt;
 
   private final Optional<@Valid InstallmentDetail> installmentDetail;
 
@@ -82,8 +78,7 @@ public class Entry extends SelfValidating<Entry> {
     final Amount amount,
     final PaymentMethod paymentMethod,
     final LocalDateTime createdAt,
-    final LocalDateTime issuedAt,
-    final YearMonth referenceMonth,
+    final IssuedAt issuedAt,
     final Optional<@Valid InstallmentDetail> installmentDetail,
     final Set<Category> categories
   ) {
@@ -96,7 +91,6 @@ public class Entry extends SelfValidating<Entry> {
     this.paymentMethod = paymentMethod;
     this.createdAt = createdAt;
     this.issuedAt = issuedAt;
-    this.referenceMonth = referenceMonth;
     this.installmentDetail = installmentDetail;
     this.categories = categories != null ? new HashSet<>(categories) : new HashSet<>();
     this.validateSelf();
@@ -114,7 +108,6 @@ public class Entry extends SelfValidating<Entry> {
       PaymentMethod.DEBIT_CARD,
       LocalDateTime.now(),
       command.issuedAt(),
-      Optional.ofNullable(command.issuedAt()).map(YearMonth::from).orElse(null),
       Optional.empty(),
       command.categories()
     );
@@ -133,7 +126,6 @@ public class Entry extends SelfValidating<Entry> {
       PaymentMethod.CREDIT_CARD,
       LocalDateTime.now(),
       command.issuedAt(),
-      Optional.ofNullable(command.issuedAt()).map(YearMonth::from).orElse(null),
       Optional.of(InstallmentDetail.newInstallmentDetail(entryId, command.installmentNumber(), command.futureExpenseEntry())),
       command.categories()
     );
@@ -151,7 +143,6 @@ public class Entry extends SelfValidating<Entry> {
       PaymentMethod.CREDIT_CARD,
       LocalDateTime.now(),
       command.issuedAt(),
-      Optional.ofNullable(command.issuedAt()).map(YearMonth::from).orElse(null),
       Optional.empty(),
       command.categories()
     );
@@ -189,12 +180,8 @@ public class Entry extends SelfValidating<Entry> {
     return this.createdAt;
   }
 
-  public LocalDateTime issuedAt() {
+  public IssuedAt issuedAt() {
     return this.issuedAt;
-  }
-
-  public YearMonth referenceMonth() {
-    return this.referenceMonth;
   }
 
   public Optional<InstallmentDetail> installmentDetail() {

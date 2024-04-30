@@ -22,10 +22,6 @@ public final class DomainValidationMessages {
 
   public static final String ENTRY_ISSUED_AT_NOT_NULL = "Issued at must not be null";
 
-  public static final String ENTRY_REFERENCE_MONTH_NOT_NULL = "Reference month must not be null";
-
-  public static final String ENTRY_FUTURE_EXPENSE = "Future expense entry must not be null";
-
   public static final String ENTRY_CATEGORIES_NOT_NULL = "Categories must not be null";
 
   public static final String ENTRY_CATEGORIES_NOT_EMPTY = "Categories must not be empty";
@@ -63,6 +59,10 @@ public final class DomainValidationMessages {
   public static final String INSTALLMENT_POSITIVE = "Installment must be non-zero positive";
 
   public static final String INSTALLMENT_NOT_NULL = "Installment must not be null";
+
+  public static final String ISSUED_AT_DATE_NOT_NULL = "Issued at date must not be null";
+
+  public static final String ISSUED_AT_REFERENCE_MONTH_NOT_NULL = "Issued at reference month must not be null";
 
   private DomainValidationMessages() { }
 
