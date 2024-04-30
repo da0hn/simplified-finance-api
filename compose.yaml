@@ -2,6 +2,7 @@ services:
   mysql:
     image: 'mysql:8.3.0'
     container_name: 'simplified-finance-database'
+    restart: always
     environment:
       - MYSQL_DATABASE=simplified-finance-db
       - MYSQL_PASSWORD=password
