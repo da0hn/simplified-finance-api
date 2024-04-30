@@ -2,6 +2,7 @@ package dev.da0hn.simplified.finance.core.domain;
 
 import dev.da0hn.simplified.finance.core.domain.commands.NewCreditExpenseEntryCommand;
 import dev.da0hn.simplified.finance.core.domain.commands.NewDebitExpenseEntryCommand;
+import dev.da0hn.simplified.finance.core.domain.commands.NewOneTimePaymentCreditExpenseEntry;
 import dev.da0hn.simplified.finance.core.domain.enums.EntryStatus;
 import dev.da0hn.simplified.finance.core.domain.enums.EntryType;
 import dev.da0hn.simplified.finance.core.domain.enums.PaymentMethod;
@@ -110,7 +111,7 @@ public class Entry extends SelfValidating<Entry> {
       EntryType.EXPENSE,
       command.status(),
       command.amount(),
-      PaymentMethod.DEBIT,
+      PaymentMethod.DEBIT_CARD,
       LocalDateTime.now(),
       command.issuedAt(),
       Optional.ofNullable(command.issuedAt()).map(YearMonth::from).orElse(null),
@@ -129,11 +130,29 @@ public class Entry extends SelfValidating<Entry> {
       EntryType.EXPENSE,
       command.status(),
       command.amount(),
-      PaymentMethod.CREDIT,
+      PaymentMethod.CREDIT_CARD,
       LocalDateTime.now(),
       command.issuedAt(),
       Optional.ofNullable(command.issuedAt()).map(YearMonth::from).orElse(null),
       Optional.of(InstallmentDetail.newInstallmentDetail(entryId, command.installmentNumber(), command.futureExpenseEntry())),
+      command.categories()
+    );
+  }
+
+  public static Entry oneTimePaymentCreditExpenseEntry(final NewOneTimePaymentCreditExpenseEntry command) {
+    Validations.requireNonNull(command, "NewOneTimePaymentCreditExpenseEntry");
+    return new Entry(
+      EntryId.newInstance(),
+      command.title(),
+      command.description(),
+      EntryType.EXPENSE,
+      EntryStatus.PAID,
+      command.amount(),
+      PaymentMethod.CREDIT_CARD,
+      LocalDateTime.now(),
+      command.issuedAt(),
+      Optional.ofNullable(command.issuedAt()).map(YearMonth::from).orElse(null),
+      Optional.empty(),
       command.categories()
     );
   }

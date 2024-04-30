@@ -2,6 +2,7 @@ package dev.da0hn.simplified.finance.core.domain;
 
 import dev.da0hn.simplified.finance.core.domain.commands.NewDebitExpenseEntryCommand;
 import dev.da0hn.simplified.finance.core.domain.commands.NewFutureExpenseCommand;
+import dev.da0hn.simplified.finance.core.domain.commands.NewOneTimePaymentCreditExpenseEntry;
 import dev.da0hn.simplified.finance.core.domain.enums.EntryStatus;
 import dev.da0hn.simplified.finance.core.domain.enums.EntryType;
 import dev.da0hn.simplified.finance.core.domain.enums.PaymentMethod;
@@ -52,7 +53,7 @@ class EntryTest {
       Assertions.assertThat(debitEntry.type()).isEqualTo(EntryType.EXPENSE);
       Assertions.assertThat(debitEntry.status()).isEqualTo(expectedStatus);
       Assertions.assertThat(debitEntry.amount()).isEqualTo(expectedAmount);
-      Assertions.assertThat(debitEntry.paymentMethod()).isEqualTo(PaymentMethod.DEBIT);
+      Assertions.assertThat(debitEntry.paymentMethod()).isEqualTo(PaymentMethod.DEBIT_CARD);
       Assertions.assertThat(debitEntry.createdAt()).isNotNull();
       Assertions.assertThat(debitEntry.issuedAt()).isEqualTo(expectedIssuedAt);
       Assertions.assertThat(debitEntry.installmentDetail()).isEmpty();
@@ -268,7 +269,7 @@ class EntryTest {
         Assertions.assertThat(entry.type()).isEqualTo(EntryType.EXPENSE);
         Assertions.assertThat(entry.status()).isEqualTo(installmentNumber == 1 ? EntryStatus.PAID : EntryStatus.PENDING);
         Assertions.assertThat(entry.amount()).isEqualTo(expectedPartialAmount);
-        Assertions.assertThat(entry.paymentMethod()).isEqualTo(PaymentMethod.CREDIT);
+        Assertions.assertThat(entry.paymentMethod()).isEqualTo(PaymentMethod.CREDIT_CARD);
         Assertions.assertThat(entry.createdAt()).isNotNull();
         final var expectedEntryIssuedAt = expectedIssuedAt.plusMonths(installmentNumber == 1 ? 0 : installmentNumber);
         Assertions.assertThat(entry.issuedAt()).isEqualTo(expectedEntryIssuedAt);
@@ -392,6 +393,147 @@ class EntryTest {
       Assertions.assertThatThrownBy(() -> FutureExpenseEntry.newFutureExpense(command))
         .isInstanceOf(DomainValidationException.class)
         .hasMessageContaining(DomainValidationMessages.FUTURE_EXPENSE_ENTRY_CATEGORIES_NOT_EMPTY);
+    }
+
+  }
+
+  @Nested
+  @DisplayName("One Time Payment Credit Expense Entry tests")
+  class OneTimePaymentCreditExpenseEntry {
+
+    @Test
+    @DisplayName("Should create a new One Time Payment Credit entry")
+    void test1() {
+      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedAmount = Amount.of(100);
+      final var expectedStatus = EntryStatus.PAID;
+      final var expectedTitle = "title";
+      final var expectedDescription = "description";
+
+      final var command = new NewOneTimePaymentCreditExpenseEntry(
+        expectedTitle,
+        expectedDescription,
+        expectedAmount,
+        expectedIssuedAt,
+        Set.of(Category.newCategory("category", "category description"))
+      );
+
+      final var oneTimePaymentCreditExpenseEntry = Entry.oneTimePaymentCreditExpenseEntry(command);
+
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry).isNotNull();
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.entryId()).isNotNull();
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.title()).isEqualTo(expectedTitle);
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.description()).isEqualTo(expectedDescription);
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.type()).isEqualTo(EntryType.EXPENSE);
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.status()).isEqualTo(expectedStatus);
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.amount()).isEqualTo(expectedAmount);
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.paymentMethod()).isEqualTo(PaymentMethod.CREDIT_CARD);
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.createdAt()).isNotNull();
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.issuedAt()).isEqualTo(expectedIssuedAt);
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.installmentDetail()).isEmpty();
+      Assertions.assertThat(oneTimePaymentCreditExpenseEntry.categories()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("Should not create an One Time Payment Credit Entry without title")
+    void test2() {
+      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedAmount = Amount.of(100);
+      final var expectedDescription = "description";
+
+      final var command = new NewOneTimePaymentCreditExpenseEntry(
+        null,
+        expectedDescription,
+        expectedAmount,
+        expectedIssuedAt,
+        Set.of(Category.newCategory("category", "category description"))
+      );
+
+      Assertions.assertThatThrownBy(() -> Entry.oneTimePaymentCreditExpenseEntry(command))
+        .isInstanceOf(DomainConstraintViolationException.class)
+        .hasMessageContaining(DomainValidationMessages.ENTRY_TITLE_NOT_BLANK);
+    }
+
+    @Test
+    @DisplayName("Should not create an One Time Payment Credit Entry without description")
+    void test3() {
+      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedAmount = Amount.of(100);
+      final var expectedStatus = EntryStatus.PENDING;
+      final var expectedTitle = "title";
+
+      final var command = new NewOneTimePaymentCreditExpenseEntry(
+        expectedTitle,
+        null,
+        expectedAmount,
+        expectedIssuedAt,
+        Set.of(Category.newCategory("category", "category description"))
+      );
+
+      Assertions.assertThatThrownBy(() -> Entry.oneTimePaymentCreditExpenseEntry(command))
+        .isInstanceOf(DomainConstraintViolationException.class)
+        .hasMessageContaining(DomainValidationMessages.ENTRY_DESCRIPTION_NOT_BLANK);
+    }
+
+    @Test
+    @DisplayName("Should not create an One Time Payment Credit Entry without amount")
+    void test4() {
+      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedTitle = "title";
+      final var expectedDescription = "description";
+
+      final var command = new NewOneTimePaymentCreditExpenseEntry(
+        expectedTitle,
+        expectedDescription,
+        null,
+        expectedIssuedAt,
+        Set.of(Category.newCategory("category", "category description"))
+      );
+
+      Assertions.assertThatThrownBy(() -> Entry.oneTimePaymentCreditExpenseEntry(command))
+        .isInstanceOf(DomainConstraintViolationException.class)
+        .hasMessageContaining(DomainValidationMessages.ENTRY_AMOUNT_NOT_NULL);
+    }
+
+    @Test
+    @DisplayName("Should not create an One Time Payment Credit Entry without issuedAt")
+    void test5() {
+      final var expectedAmount = Amount.of(100);
+      final var expectedTitle = "title";
+      final var expectedDescription = "description";
+
+      final var command = new NewOneTimePaymentCreditExpenseEntry(
+        expectedTitle,
+        expectedDescription,
+        expectedAmount,
+        null,
+        Set.of(Category.newCategory("category", "category description"))
+      );
+
+      Assertions.assertThatThrownBy(() -> Entry.oneTimePaymentCreditExpenseEntry(command))
+        .isInstanceOf(DomainConstraintViolationException.class)
+        .hasMessageContaining(DomainValidationMessages.ENTRY_ISSUED_AT_NOT_NULL);
+    }
+
+    @Test
+    @DisplayName("Should not create an One Time Payment Credit Entry with categories null")
+    void test6() {
+      final var expectedIssuedAt = LocalDateTime.now().minusDays(10);
+      final var expectedAmount = Amount.of(100);
+      final var expectedTitle = "title";
+      final var expectedDescription = "description";
+
+      final var command = new NewOneTimePaymentCreditExpenseEntry(
+        expectedTitle,
+        expectedDescription,
+        expectedAmount,
+        expectedIssuedAt,
+        null
+      );
+
+      Assertions.assertThatThrownBy(() -> Entry.oneTimePaymentCreditExpenseEntry(command))
+        .isInstanceOf(DomainConstraintViolationException.class)
+        .hasMessageContaining(DomainValidationMessages.ENTRY_CATEGORIES_NOT_EMPTY);
     }
 
   }
