@@ -1,6 +1,9 @@
 package dev.da0hn.simplified.finance.core.domain.validation;
 
+import dev.da0hn.simplified.finance.core.domain.exceptions.ExceptionFactory;
+
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.NON_NULL_ARGUMENT;
@@ -14,9 +17,7 @@ public final class Validations {
     final String parameterName
   ) throws IllegalArgumentException {
     if (object == null) {
-      throw new IllegalArgumentException(
-        String.format(NON_NULL_ARGUMENT, parameterName)
-      );
+      throw ExceptionFactory.illegalArgument(NON_NULL_ARGUMENT, parameterName);
     }
   }
 
@@ -27,7 +28,15 @@ public final class Validations {
     if (collection == null || collection.isEmpty()) {
       throw exceptionSupplier.get();
     }
+  }
 
+  public static <T, X extends RuntimeException> void requireNotPresent(
+    final Optional<T> maybeValue,
+    final Supplier<X> exceptionSupplier
+  ) {
+    maybeValue.map(value -> {
+      throw exceptionSupplier.get();
+    });
   }
 
 }
