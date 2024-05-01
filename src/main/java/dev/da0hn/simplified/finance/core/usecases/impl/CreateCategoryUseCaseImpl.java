@@ -7,7 +7,9 @@ import dev.da0hn.simplified.finance.core.ports.api.usecases.CreateCategoryUseCas
 import dev.da0hn.simplified.finance.core.ports.spi.repositories.CategoryRepository;
 import dev.da0hn.simplified.finance.core.shared.annotations.UseCase;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @UseCase
 @AllArgsConstructor
 public class CreateCategoryUseCaseImpl implements CreateCategoryUseCase {
@@ -16,7 +18,7 @@ public class CreateCategoryUseCaseImpl implements CreateCategoryUseCase {
 
   @Override
   public Output execute(final Input input) {
-
+    log.info("method=execute(input={})", input);
     Validations.requireNotPresent(
       this.categoryRepository.findByName(input.categoryName()),
       ExceptionFactory.illegalArgumentSupplier("Category with name %s already exists", input.categoryName())
@@ -25,6 +27,10 @@ public class CreateCategoryUseCaseImpl implements CreateCategoryUseCase {
     final var category = Category.newCategory(input.categoryName(), input.categoryDescription());
 
     this.categoryRepository.create(category);
+
+    if (log.isDebugEnabled()) {
+      log.debug("method=categoryRepository.create(category={})", category);
+    }
 
     return Output.builder()
       .categoryId(category.categoryId().value())
