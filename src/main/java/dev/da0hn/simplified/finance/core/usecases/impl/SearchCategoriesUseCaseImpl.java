@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.stream.Collectors;
 
+import static dev.da0hn.simplified.finance.core.ports.spi.repositories.CategoryRepository.CategoryFilterCriteria;
+
 @Slf4j
 @UseCase
 @AllArgsConstructor
@@ -18,7 +20,14 @@ public class SearchCategoriesUseCaseImpl implements SearchCategoriesUseCase {
   @Override
   public Output execute(final Input input) {
     log.info("method=execute(input={})", input);
-    final var categories = this.categoryRepository.searchBy(input.queryName(), input.queryDescription(), input.queryText());
+    final var categories = this.categoryRepository.searchBy(
+      CategoryFilterCriteria.builder()
+        .queryId(input.queryId())
+        .queryName(input.queryName())
+        .queryDescription(input.queryDescription())
+        .queryText(input.queryText())
+        .build()
+    );
     if (log.isDebugEnabled()) {
       log.debug("method=categoryRepository.searchBy(input={}) => {}", input, categories);
     }

@@ -31,11 +31,16 @@ class SearchCategoriesUseCaseImplTest {
   @Test
   @DisplayName("Should search categories")
   void test1() {
-    final var input = new SearchCategoriesUseCase.Input("queryName", "queryDescription", "queryText");
+    final var input = new SearchCategoriesUseCase.Input(
+      "b8a88285-277f-4d38-96c7-ff55d956ed03",
+      "queryName",
+      "queryDescription",
+      "queryText"
+    );
 
     Mockito.doReturn(List.of(Category.newCategory("name1", "description1")))
       .when(this.categoryRepository)
-      .searchBy(Mockito.eq(input.queryName()), Mockito.eq(input.queryDescription()), Mockito.eq(input.queryText()));
+      .searchBy(Mockito.any(CategoryRepository.CategoryFilterCriteria.class));
 
     final var output = this.sut.execute(input);
 
