@@ -5,7 +5,9 @@ import dev.da0hn.simplified.finance.core.domain.validation.SelfValidating;
 import dev.da0hn.simplified.finance.core.domain.valueobjects.CategoryId;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
 public class Category extends SelfValidating<Category> {
 
   @NotNull(message = DomainValidationMessages.CATEGORY_ID_NOT_NULL)
