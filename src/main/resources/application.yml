@@ -31,3 +31,10 @@ spring:
 server:
   address: 0.0.0.0
   port: ${PORT:8080}
+springdoc:
+  show-actuator: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
