@@ -6,6 +6,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        jdbc:
+          batch_size: 25
+        order_updates: true
+        order_inserts: true
   datasource:
     url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3301}/simplified-finance-db
     username: ${DATABASE_USER:simplified_finance_user}
