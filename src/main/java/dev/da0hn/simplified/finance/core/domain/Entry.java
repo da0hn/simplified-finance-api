@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -34,6 +35,7 @@ import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidati
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_TITLE_NOT_BLANK;
 import static dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages.ENTRY_TYPE_NOT_NULL;
 
+@Builder
 public class Entry extends SelfValidating<Entry> {
 
   @NotNull(message = ENTRY_ID_NOT_NULL)

@@ -4,6 +4,7 @@ import dev.da0hn.simplified.finance.core.domain.commands.NewCreditExpenseEntryCo
 import dev.da0hn.simplified.finance.core.domain.commands.NewFutureExpenseCommand;
 import dev.da0hn.simplified.finance.core.domain.enums.EntryStatus;
 import dev.da0hn.simplified.finance.core.domain.exceptions.DomainValidationException;
+import dev.da0hn.simplified.finance.core.domain.exceptions.ExceptionFactory;
 import dev.da0hn.simplified.finance.core.domain.validation.DomainValidationMessages;
 import dev.da0hn.simplified.finance.core.domain.validation.SelfValidating;
 import dev.da0hn.simplified.finance.core.domain.validation.Validations;
@@ -140,6 +141,17 @@ public class FutureExpenseEntry extends SelfValidating<FutureExpenseEntry> {
 
   public Set<Entry> entries() {
     return Collections.unmodifiableSet(this.entries);
+  }
+
+  public Entry getFirstInstallmentEntry() {
+    return this.entries.stream()
+      .min(Comparator.comparing(
+        e -> e.installmentDetail().map(InstallmentDetail::installmentNumber).orElse(-1L)
+      ))
+      .orElseThrow(ExceptionFactory.illegalStateSupplier(
+        "No entries found for futureExpenseEntryId=%s",
+        this.futureExpenseEntryId().value()
+      ));
   }
 
   private void generateEntries(final Set<Category> categories) {

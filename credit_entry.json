@@ -1,0 +1,19 @@
+{
+  "name": "Curso Dev Eficiente",
+  "description": "",
+  "issued_at": "2024-05-03:00:00:00",
+  "type": "EXPENSE",
+  "amount": 772.50,
+  "installments": 6,
+  "partial_amount": 128.75,
+  "categories": [
+    {
+      "id": "fbb3504a-16be-4123-967a-53f7f317950f",
+      "name": "Curso"
+    },
+    {
+      "id": "7b833adc-6695-43e7-a4e5-ee2943aadc1d",
+      "name": "Estudo"
+    }
+  ]
+}
